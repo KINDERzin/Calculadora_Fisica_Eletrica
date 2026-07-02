@@ -53,7 +53,8 @@ public class CalculadoraController {
 		double corrente_i = FEM_induzida / dados.getResistencia();
 		
 		// Acrescentar validação 
-		
+		if(corrente_i < configs.CORRENTE_INDUZIDA_MIN || corrente_i > configs.CORRENTE_INDUZIDA_MAX)
+			throw new IllegalArgumentException("A corrente induzida deve ter um valor entre " + configs.CORRENTE_INDUZIDA_MIN + " e " + configs.CORRENTE_INDUZIDA_MAX + "!");
 		this.corrente_induzida = corrente_induzida;
 	}
 	// Área do solenóide - a_sol​ = π * r²_sol
