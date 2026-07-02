@@ -1,0 +1,19 @@
+# Pastas de Build (Código compilado)
+bin/
+target/
+build/
+
+# Pastas de Configuração do Eclipse
+.settings/
+.project
+.classpath
+.metadata/
+
+# Arquivos de Sistema e IDE
+.DS_Store
+*.iml
+.idea/
+*.log
+
+# Pastas de cache e temporários
+tmp/
