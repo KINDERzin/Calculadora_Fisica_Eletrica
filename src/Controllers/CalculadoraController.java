@@ -12,9 +12,9 @@ public class CalculadoraController {
 	
 	private DadosEntrada dados;
 	
-	public CalculadoraController() {
-//		dados = new DadosEntrada();
-		Initialize();
+	public CalculadoraController(DadosEntrada dados) {
+	    this.dados = dados;
+	    Initialize();
 	}
 	
 	public void Initialize( ) {
