@@ -5,7 +5,7 @@
 > Faraday-Lenz) em uma solução computacional interativa.
 
 ---
-![Desafio proposto](Images/desafio.png)
+![Desafio proposto](Images/desafio.jpeg)
 
 ## 📖 Sobre o projeto
 
