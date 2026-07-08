@@ -123,11 +123,6 @@ verificação para os resultados calculados pela aplicação.
 
 ![Problema resolvido no caderno](Images/exercicio_resolvido.jpg)
 
-### Aplicação em execução
-Interface do InductoCalc com os dados de entrada preenchidos e o passo a
-passo do cálculo exibido.
-
-
 ## 👤 Autoria
 
 - **Autor(a):** Erick Matheus Frias Rafael
