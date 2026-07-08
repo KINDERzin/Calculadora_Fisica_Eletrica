@@ -111,7 +111,7 @@ No Eclipse:
    --module-path "C:\javafx-sdk-21\lib" --add-modules javafx.controls
    ```
    (ajuste o caminho para onde o JavaFX SDK estiver instalado no seu sistema)
-4. Execute a classe `Views.CalculadoraView`.
+4. Execute a classe `application.Main`.
 
 ### Problema resolvido no caderno
 Resolução manual do problema de indução eletromagnética, usada como base e
