@@ -113,10 +113,6 @@ No Eclipse:
    (ajuste o caminho para onde o JavaFX SDK estiver instalado no seu sistema)
 4. Execute a classe `Views.CalculadoraView`.
 
-## 📸 Capturas de tela
-
-*(imagens a serem adicionadas)*
-
 ### Problema resolvido no caderno
 Resolução manual do problema de indução eletromagnética, usada como base e
 verificação para os resultados calculados pela aplicação.
