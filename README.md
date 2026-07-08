@@ -6,6 +6,8 @@
 
 ---
 
+![Aplicação em execução](Images/aplicacao.png)
+
 ## 📖 Sobre o projeto
 
 O **InductoCalc** é uma aplicação desktop em Java/JavaFX que resolve, passo a
@@ -125,7 +127,6 @@ verificação para os resultados calculados pela aplicação.
 Interface do InductoCalc com os dados de entrada preenchidos e o passo a
 passo do cálculo exibido.
 
-![Aplicação em execução](Images/aplicacao.png)
 
 ## 👤 Autoria
 
