@@ -119,7 +119,7 @@ No Eclipse:
 Resolução manual do problema de indução eletromagnética, usada como base e
 verificação para os resultados calculados pela aplicação.
 
-![Problema resolvido no caderno](docs/imagens/problema-caderno.png)
+![Problema resolvido no caderno](Images/exercicio resolvido.jpg)
 
 ### Aplicação em execução
 Interface do InductoCalc com os dados de entrada preenchidos e o passo a
