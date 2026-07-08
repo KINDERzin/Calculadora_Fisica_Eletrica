@@ -40,13 +40,13 @@ public class CalculadoraView extends Application {
     private static final String C_BRIGHT   = "#c8ddd5";
 
     // ── Campos de entrada ────────────────────────────────────────────────
-    private final TextField tf_qtdEspiras    = inputField("250");
+    private final TextField tf_qtdEspiras    = inputField("120");
     private final TextField tf_resistencia   = inputField("5.3");
-    private final TextField tf_espirasPorM   = inputField("1200");
-    private final TextField tf_diametroSol   = inputField("0.09");
-    private final TextField tf_cInicial      = inputField("0.8");
-    private final TextField tf_cFinal        = inputField("3.2");
-    private final TextField tf_intervaloTemp = inputField("0.05");
+    private final TextField tf_espirasPorM   = inputField("22000");
+    private final TextField tf_diametroSol   = inputField("0.032");
+    private final TextField tf_cInicial      = inputField("1.5");
+    private final TextField tf_cFinal        = inputField("0.0");
+    private final TextField tf_intervaloTemp = inputField("0.025");
 
     // ── Labels de resultado ──────────────────────────────────────────────
     private final Label lbl_B    = resultLabel("—");
