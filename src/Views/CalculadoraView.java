@@ -9,10 +9,13 @@ package Views;
  */
 
 import Controllers.CalculadoraController;
+import Models.Configuracoes;
 import Models.DadosEntrada;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -24,6 +27,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class CalculadoraView extends Application {
 
@@ -54,6 +58,27 @@ public class CalculadoraView extends Application {
     private final Label lbl_dPhi = resultLabel("—");
     private final Label lbl_FEM  = resultLabel("—");
     private final Label lbl_i    = new Label("—");   // estilo aplicado em buildFinalCard()
+
+    // ── Labels do "passo a passo" (substituição de valores) ──────────────
+    // Preenchidos em handleCalcular(), exibidos ao expandir cada card
+    private final Label lbl_detalhe1 = detailLabel();
+    private final Label lbl_detalhe2 = detailLabel();
+    private final Label lbl_detalhe3 = detailLabel();
+    private final Label lbl_detalhe4 = detailLabel();
+    private final Label lbl_detalhe5 = detailLabel();
+
+    // ── Containers expansíveis (um por passo) e seus indicadores ─────────
+    private final VBox  box_detalhe1 = detailBox(lbl_detalhe1);
+    private final VBox  box_detalhe2 = detailBox(lbl_detalhe2);
+    private final VBox  box_detalhe3 = detailBox(lbl_detalhe3);
+    private final VBox  box_detalhe4 = detailBox(lbl_detalhe4);
+    private final VBox  box_detalhe5 = detailBox(lbl_detalhe5);
+
+    private final Label chevron1 = chevronLabel();
+    private final Label chevron2 = chevronLabel();
+    private final Label chevron3 = chevronLabel();
+    private final Label chevron4 = chevronLabel();
+    private final Label chevron5 = chevronLabel();
 
     // ── Status e contadores ──────────────────────────────────────────────
     private final Label lbl_status   = monoLabel("● IDLE",           C_DIM, 10);
@@ -241,17 +266,21 @@ public class CalculadoraView extends Application {
             "-fx-border-width: 0 0 1 0;"
         );
 
-        // Passos 1 a 4
+        // Passos 1 a 4 — cada um clicável, expande e mostra a substituição de valores
         VBox steps = new VBox(8,
-            buildResultRow("1", "Campo magnético",      "B = μ₀ · n · I",    lbl_B,    "Tesla"),
-            buildResultRow("2", "Área do solenoide",    "A = π · r²",         lbl_A,    "m²"),
-            buildResultRow("3", "Variação do fluxo",    "ΔΦ = ΔB · A",        lbl_dPhi, "Weber"),
-            buildResultRow("4", "FEM — Lei de Faraday", "ε = N · ΔΦ / Δt",   lbl_FEM,  "Volt")
+            buildResultRow("1", "Campo magnético",      "B = μ₀ · n · I",    lbl_B,    "Tesla",
+                           chevron1, box_detalhe1),
+            buildResultRow("2", "Área do solenoide",    "A = π · r²",         lbl_A,    "m²",
+                           chevron2, box_detalhe2),
+            buildResultRow("3", "Variação do fluxo",    "ΔΦ = ΔB · A",        lbl_dPhi, "Weber",
+                           chevron3, box_detalhe3),
+            buildResultRow("4", "FEM — Lei de Faraday", "ε = N · ΔΦ / Δt",   lbl_FEM,  "Volt",
+                           chevron4, box_detalhe4)
         );
         VBox.setVgrow(steps, Priority.ALWAYS);
 
         // Passo 5 — resultado final em destaque
-        HBox finalCard = buildFinalCard();
+        VBox finalCard = buildFinalCard();
 
         VBox content = new VBox(8, steps, finalCard);
         content.setPadding(new Insets(14));
@@ -263,9 +292,12 @@ public class CalculadoraView extends Application {
         return canvas;
     }
 
-    // ── Linha de resultado: [num] [desc + fórmula] [valor + unidade] ────
-    private HBox buildResultRow(String num, String desc, String formula,
-                                Label valLbl, String unit) {
+    // ── Linha de resultado: [num] [desc + fórmula] [valor + unidade] [▸] ─
+    //    Clicável — expande/recolhe o box de detalhe abaixo, mostrando o
+    //    cálculo com os valores substituídos na fórmula.
+    private VBox buildResultRow(String num, String desc, String formula,
+                                Label valLbl, String unit,
+                                Label chevron, VBox detailBox) {
         // Badge numerado
         Label numBadge = monoLabel(num, C_TEAL, 11);
         numBadge.setMinWidth(24);
@@ -289,21 +321,42 @@ public class CalculadoraView extends Application {
         VBox valBox   = new VBox(2, valLbl, unitLbl);
         valBox.setAlignment(Pos.CENTER_RIGHT);
 
-        HBox row = new HBox(12, numBadge, textBox, valBox);
-        row.setAlignment(Pos.CENTER_LEFT);
-        row.setPadding(new Insets(9, 12, 9, 12));
-        row.setStyle(
+        HBox header = new HBox(12, numBadge, textBox, valBox, chevron);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setPadding(new Insets(9, 12, 9, 12));
+        header.setCursor(Cursor.HAND);
+
+        VBox card = new VBox(0, header, detailBox);
+        card.setStyle(
             "-fx-background-color: " + BG_CLUSTER + ";" +
             // Borda esquerda em teal, as demais em carbon
             "-fx-border-color: " + C_BORDER + " " + C_BORDER + " " + C_BORDER + " " + C_TEAL + ";" +
             "-fx-border-width: 1 1 1 3;" +
             "-fx-background-radius: 3; -fx-border-radius: 3;"
         );
-        return row;
+
+        header.setOnMouseClicked(e -> toggleDetalhe(detailBox, chevron));
+        return card;
     }
 
-    // ── Card do resultado final ──────────────────
-    private HBox buildFinalCard() {
+    // ── Alterna a exibição do bloco de cálculo detalhado ────────────────
+    private void toggleDetalhe(VBox detailBox, Label chevron) {
+        boolean expandindo = !detailBox.isVisible();
+        detailBox.setVisible(expandindo);
+        detailBox.setManaged(expandindo);
+        chevron.setText(expandindo ? "▾" : "▸");
+
+        if (expandindo) {
+            detailBox.setOpacity(0);
+            FadeTransition fade = new FadeTransition(Duration.millis(160), detailBox);
+            fade.setFromValue(0);
+            fade.setToValue(1);
+            fade.play();
+        }
+    }
+
+    // ── Card do resultado final (clicável — expande o cálculo) ──────────
+    private VBox buildFinalCard() {
         Label numBadge = monoLabel("5", BG_CARBON, 13);
         numBadge.setMinWidth(38);
         numBadge.setMinHeight(38);
@@ -331,15 +384,22 @@ public class CalculadoraView extends Application {
         VBox valBox   = new VBox(2, lbl_i, unitLbl);
         valBox.setAlignment(Pos.CENTER_RIGHT);
 
-        HBox card = new HBox(14, numBadge, textBox, valBox);
-        card.setAlignment(Pos.CENTER_LEFT);
-        card.setPadding(new Insets(14, 16, 14, 16));
+        chevron5.setStyle(chevron5.getStyle() + "-fx-text-fill: " + C_TEAL + ";");
+
+        HBox header = new HBox(14, numBadge, textBox, valBox, chevron5);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setPadding(new Insets(14, 16, 14, 16));
+        header.setCursor(Cursor.HAND);
+
+        VBox card = new VBox(0, header, box_detalhe5);
         card.setStyle(
             "-fx-background-color: #0d2018;" +
             "-fx-border-color: " + C_TEAL + ";" +
             "-fx-border-width: 1 1 1 3;" +
             "-fx-background-radius: 3; -fx-border-radius: 3;"
         );
+
+        header.setOnMouseClicked(e -> toggleDetalhe(box_detalhe5, chevron5));
         return card;
     }
 
@@ -400,6 +460,8 @@ public class CalculadoraView extends Application {
             double i_mA = Math.abs(ctrl.getCorrente_induzida()) * 1000;
             lbl_i.setText(String.format("%.2f", i_mA));
 
+            preencherDetalhes(dados, ctrl);
+
             runCount++;
             lbl_runCount.setText(String.format("RUN: %03d", runCount));
             setStatus("● DONE", C_TEAL);
@@ -416,6 +478,97 @@ public class CalculadoraView extends Application {
         }
     }
 
+    // ── Monta o texto de cada passo com os valores efetivamente usados ──
+    //    Os valores finais aqui SEMPRE batem com os exibidos nos cards
+    //    fechados (lbl_B, lbl_A, lbl_dPhi, lbl_FEM, lbl_i), inclusive o
+    //    uso de módulo (Math.abs) em ΔΦ, ε e i — o sinal físico (Lei de
+    //    Lenz) é mostrado como informação extra, não substitui o valor.
+    private void preencherDetalhes(DadosEntrada dados, CalculadoraController ctrl) {
+        double n   = dados.getEspiras_m();
+        double i0  = dados.getC_inicial();
+        double i1  = dados.getC_final();
+        double d   = dados.getD_solenoide();
+        double r   = d / 2.0;
+        double N   = dados.getQtd_espiras();
+        double dt  = dados.getIntervalo_tempo();
+        double R   = dados.getResistencia();
+        double mu0 = Configuracoes.MI;
+
+        double B0 = ctrl.getCampo_mag_sol();     // igual ao valor do card 1 (usa corrente inicial)
+        double B1 = mu0 * n * i1;                // campo com a corrente final (auxiliar do passo 3)
+        double dB = B1 - B0;
+        double A  = ctrl.getA_sol();             // igual ao valor do card 2
+
+        double dPhiSinal = ctrl.getVariacao_fluxo();   // ΔΦ com sinal, igual ao usado internamente
+        double femSinal  = ctrl.getFEM_induzida();     // ε com sinal
+        double corrSinal = ctrl.getCorrente_induzida();// i com sinal
+
+        double dPhiAbs = Math.abs(dPhiSinal);          // igual ao valor do card 3
+        double femAbs  = Math.abs(femSinal);           // igual ao valor do card 4
+        double corrAbs = Math.abs(corrSinal);          // igual ao valor do card 5
+
+        // Passo 1 — Campo magnético (com a corrente inicial)
+        lbl_detalhe1.setText(
+            "μ₀ = 4π × 10⁻⁷ ≈ " + fmt(mu0, "%.5e") + " T·m/A\n" +
+            "n  = " + fmt(n, "%.0f")  + " espiras/m\n" +
+            "I  = " + fmt(i0, "%.3f") + " A  (corrente inicial)\n\n" +
+            "B = μ₀ × n × I\n" +
+            "B = " + fmt(mu0, "%.5e") + " × " + fmt(n, "%.0f") + " × " + fmt(i0, "%.3f") + "\n" +
+            "B = " + fmt(mu0 * n, "%.5e") + " × " + fmt(i0, "%.3f") + "\n" +
+            "B = " + fmt(B0, "%.5f") + " T  ← valor exibido no card acima"
+        );
+
+        // Passo 2 — Área do solenoide
+        lbl_detalhe2.setText(
+            "d = " + fmt(d, "%.4f") + " m\n" +
+            "r = d / 2 = " + fmt(r, "%.4f") + " m\n\n" +
+            "A = π × r²\n" +
+            "A = π × (" + fmt(r, "%.4f") + ")²\n" +
+            "A = " + fmt(Math.PI, "%.5f") + " × " + fmt(r * r, "%.3e") + "\n" +
+            "A = " + fmt(A, "%.3e") + " m²  ← valor exibido no card acima"
+        );
+
+        // Passo 3 — Variação do fluxo (precisa do campo com I inicial e final)
+        lbl_detalhe3.setText(
+            "B(I₀) = μ₀ × n × I₀ = " + fmt(B0, "%.5f") + " T   (mesmo do passo 1)\n" +
+            "B(I₁) = μ₀ × n × I₁ = " + fmt(mu0, "%.5e") + " × " + fmt(n, "%.0f") + " × " + fmt(i1, "%.3f") +
+                " = " + fmt(B1, "%.5f") + " T\n\n" +
+            "ΔB = B(I₁) - B(I₀)\n" +
+            "ΔB = " + fmt(B1, "%.5f") + " - " + fmt(B0, "%.5f") + " = " + fmt(dB, "%.5f") + " T\n\n" +
+            "ΔΦ = ΔB × A\n" +
+            "ΔΦ = " + fmt(dB, "%.5f") + " × " + fmt(A, "%.3e") + "\n" +
+            "ΔΦ = " + fmt(dPhiSinal, "%.3e") + " Wb  (o sinal indica o sentido — Lei de Lenz)\n" +
+            "|ΔΦ| = " + fmt(dPhiAbs, "%.3e") + " Wb  ← valor exibido no card acima"
+        );
+
+        // Passo 4 — FEM induzida
+        lbl_detalhe4.setText(
+            "N  = " + fmt(N, "%.0f")  + " espiras\n" +
+            "ΔΦ = " + fmt(dPhiSinal, "%.3e") + " Wb  (com sinal, do passo 3)\n" +
+            "Δt = " + fmt(dt, "%.3f") + " s\n\n" +
+            "ε = N × (ΔΦ / Δt)\n" +
+            "ε = " + fmt(N, "%.0f") + " × (" + fmt(dPhiSinal, "%.3e") + " / " + fmt(dt, "%.3f") + ")\n" +
+            "ε = " + fmt(N, "%.0f") + " × " + fmt(dPhiSinal / dt, "%.3e") + "\n" +
+            "ε = " + fmt(femSinal, "%.4f") + " V  (o sinal indica o sentido — Lei de Lenz)\n" +
+            "|ε| = " + fmt(femAbs, "%.4f") + " V  ← valor exibido no card acima"
+        );
+
+        // Passo 5 — Corrente induzida (Lei de Ohm)
+        lbl_detalhe5.setText(
+            "ε = " + fmt(femSinal, "%.4f") + " V  (com sinal, do passo 4)\n" +
+            "R = " + fmt(R, "%.3f")  + " Ω\n\n" +
+            "i = ε / R\n" +
+            "i = " + fmt(femSinal, "%.4f") + " / " + fmt(R, "%.3f") + "\n" +
+            "i = " + fmt(corrSinal, "%.5f") + " A  (o sinal indica o sentido — Lei de Lenz)\n" +
+            "|i| = " + fmt(corrAbs, "%.5f") + " A  =  " + fmt(corrAbs * 1000, "%.2f") +
+                " mA  ← valor exibido no card acima"
+        );
+    }
+
+    private static String fmt(double valor, String pattern) {
+        return String.format(pattern, valor);
+    }
+
     private void handleReset() {
         tf_diametroSol.setText("");   tf_espirasPorM.setText("");
         tf_qtdEspiras.setText("");    tf_resistencia.setText("");
@@ -424,6 +577,18 @@ public class CalculadoraView extends Application {
 
         lbl_B.setText("—"); lbl_A.setText("—");
         lbl_dPhi.setText("—"); lbl_FEM.setText("—"); lbl_i.setText("—");
+
+        // Recolhe e limpa os cards de detalhe do passo a passo
+        for (VBox box : new VBox[]{ box_detalhe1, box_detalhe2, box_detalhe3, box_detalhe4, box_detalhe5 }) {
+            box.setVisible(false);
+            box.setManaged(false);
+        }
+        for (Label chev : new Label[]{ chevron1, chevron2, chevron3, chevron4, chevron5 }) {
+            chev.setText("▸");
+        }
+        lbl_detalhe1.setText(""); lbl_detalhe2.setText(""); lbl_detalhe3.setText("");
+        lbl_detalhe4.setText(""); lbl_detalhe5.setText("");
+
         setStatus("● IDLE", C_DIM);
     }
 
@@ -485,6 +650,41 @@ public class CalculadoraView extends Application {
             tf.setStyle(focused ? focusStyle : normalStyle)
         );
         return tf;
+    }
+
+    // Label multi-linha com a substituição de valores na fórmula (estilo "código")
+    private Label detailLabel() {
+        Label lbl = new Label("");
+        lbl.setWrapText(true);
+        lbl.setStyle(
+            "-fx-font-family: 'Consolas', monospace;" +
+            "-fx-font-size: 11px;" +
+            "-fx-text-fill: " + C_MID + ";" +
+            "-fx-line-spacing: 3px;"
+        );
+        return lbl;
+    }
+
+    // Container expansível que envolve o label de detalhe (inicia oculto/recolhido)
+    private VBox detailBox(Label conteudo) {
+        VBox box = new VBox(conteudo);
+        box.setPadding(new Insets(2, 14, 12, 46)); // alinhado à direita do badge numerado
+        box.setStyle(
+            "-fx-background-color: " + BG_INPUT + ";" +
+            "-fx-border-color: " + C_BORDER + " transparent transparent transparent;" +
+            "-fx-border-width: 1 0 0 0;"
+        );
+        box.setVisible(false);
+        box.setManaged(false);
+        return box;
+    }
+
+    // Indicador de expandir/recolher (seta)
+    private Label chevronLabel() {
+        Label lbl = monoLabel("▸", C_DIM, 11);
+        lbl.setMinWidth(16);
+        lbl.setAlignment(Pos.CENTER);
+        return lbl;
     }
 
     // Label para valores de resultado
