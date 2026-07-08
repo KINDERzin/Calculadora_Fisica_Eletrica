@@ -125,7 +125,7 @@ verificação para os resultados calculados pela aplicação.
 Interface do InductoCalc com os dados de entrada preenchidos e o passo a
 passo do cálculo exibido.
 
-![Aplicação em execução](docs/imagens/app-rodando.png)
+![Aplicação em execução](Images/aplicacao.png)
 
 ## 👤 Autoria
 
