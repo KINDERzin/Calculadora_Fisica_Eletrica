@@ -1,6 +1,6 @@
 # ⚡ InductoCalc — Calculadora de Indução Eletromagnética
 
-> **Trabalho acadêmico** desenvolvido para a disciplina de **Física II**, com o
+> **Trabalho acadêmico** desenvolvido para a disciplina de **Física**, com o
 > objetivo de aplicar os conceitos de indução eletromagnética (Lei de
 > Faraday-Lenz) em uma solução computacional interativa.
 
