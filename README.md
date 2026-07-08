@@ -5,8 +5,7 @@
 > Faraday-Lenz) em uma solução computacional interativa.
 
 ---
-
-![Aplicação em execução](Images/aplicacao.png)
+![Desafio proposto](Images/desafio.png)
 
 ## 📖 Sobre o projeto
 
@@ -117,7 +116,20 @@ No Eclipse:
 Resolução manual do problema de indução eletromagnética, usada como base e
 verificação para os resultados calculados pela aplicação.
 
+## 📸 Capturas de tela
+
+### Aplicação em execução
+Interface do InductoCalc com os dados de entrada preenchidos e o passo a
+passo do cálculo exibido.
+
+![Aplicação em execução](Images/aplicacao.png)
+
+### Problema resolvido no caderno
+Resolução manual do problema de indução eletromagnética, usada como base e
+verificação para os resultados calculados pela aplicação.
+
 ![Problema resolvido no caderno](Images/exercicio_resolvido.jpg)
+
 
 ## 👤 Autoria
 
